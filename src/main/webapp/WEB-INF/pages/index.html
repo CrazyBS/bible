@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+    <script language="JavaScript" src="/library/require.js" ></script>
+    <script language="JavaScript">
+        require.config({
+            baseUrl : '/src',
+            paths : {
+                angular : '/library/angular',
+                'angular-debounce' : '/library/angular-debounce',
+                lodash : '/library/lodash',
+                app : '/src/BibleApp',
+                controller : '/src/BibleController',
+                filter : '/src/BibleFilter',
+                service : '/src/BibleService'
+            },
+            shim : {
+                angular : {
+                    exports : 'angular'
+                },
+                lodash : {
+                    exports : '_'
+                }
+            }
+        });
+
+        require(['app'], function (app) {
+            app.init();
+        });
+    </script>
+</HEAD>
+<BODY>
+    <div>
+        <div data-ng-controller="BibleController">
+            <div style="width: 20%;height:100%;position: fixed;left:0;top:0">
+                <select data-ng-model="versionSelection">
+                    <option data-ng-repeat="(version,books) in  bible | groupBy:'version' | orderBy:'version'">{{version}}</option>
+                </select>
+                <br />
+                <select data-ng-model="bookSelection">
+                    <option data-ng-repeat="(book,chapters) in  bible | filter : {version: versionSelection} | groupBy:'book'">{{book}}</option>
+                </select>
+                <br />
+                <ul>
+                    <li data-ng-repeat="(chapter,verses) in  bible | filter: {version: versionSelection} | filter: {book: bookSelection} | groupBy:'chapter' | orderBy: 'chapter'"
+                        data-ng-click="setChapter(chapter)"
+                        style="cursor: pointer" data-ng-class="{selected: chapterSelection == chapter}">
+
+                        Chapter {{chapter}} - <span data-ng-if="$last">remove?</span>
+                    </li>
+                    <li data-ng-click="addChapter()" style="cursor: pointer">Add Chapter</li>
+                </ul>
+            </div>
+            <div style="width: 80%;height: 100%;position: fixed;right:0;top:0; overflow: scroll">
+                <span data-ng-repeat="verse in bible | filter: {version: versionSelection} | filter: {book: bookSelection} | filter: {chapter: chapterSelection} | orderBy: 'verse'"
+                      data-ng-controller="VerseController"
+                      style="font-family: 'Courier New', Courier, monospace; font-size:small">
+
+                    {{verse.verse}}
+                    <span data-ng-if="!$last" ng-bind-html="renderAsHtml(verse.text)"></span>
+                    <input type="text"
+                           data-ng-if="$last"
+                           data-ng-keyup="$event.keyCode == 13 && $event.shiftKey && $parent.newVerse(verse) || $event.keyCode == 13 && addNewLine(verse)"
+                           data-ng-model="verse.text"
+                           data-ng-attr-size="{{verse.text.length+1}}"
+                           data-focus-me="{{verse.focusMe}}"
+                           style="font-family: 'Courier New', Courier, monospace; border: 0"/>
+                </span>
+            </div>
+        </div>
+    </div>
+</BODY>
+</HTML>
