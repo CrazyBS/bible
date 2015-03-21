@@ -1,6 +1,7 @@
 package org.daegames.bible;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,18 @@ import javax.sql.DataSource;
 @EnableSpringDataWebSupport
 public class Application extends WebMvcConfigurerAdapter implements WebApplicationInitializer {
 
+    @Value("jdbc.url")
+    private String url;
+
+    @Value("jdbc.class")
+    private String classname;
+
+    @Value("jdbc.username")
+    private String username;
+
+    @Value("jdbc.password")
+    private String password;
+
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         // Create the 'root' Spring application context
@@ -65,10 +78,10 @@ public class Application extends WebMvcConfigurerAdapter implements WebApplicati
     public DataSource dataSource() {
         BasicDataSource dataSource = new BasicDataSource();
 
-        dataSource.setUrl("jdbc:oracle:thin:@dogma.c6ch73vbhzi2.us-west-2.rds.amazonaws.com:1521:ORCL");
-        dataSource.setDriverClassName("oracle.jdbc.driver.OracleDriver");
-        dataSource.setUsername("dogma");
-        dataSource.setPassword("SHtrees");
+        dataSource.setUrl(url);
+        dataSource.setDriverClassName(classname);
+        dataSource.setUsername(username);
+        dataSource.setPassword(password);
 
         return dataSource;
     }
