@@ -39,40 +39,41 @@ public class BibleController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}")
-    public PagedResources<BibleResource> getVersion(
-                                        @PageableDefault(size = 100) Pageable pageable,
-                                        @PathVariable("version") String version,
-                                        PagedResourcesAssembler<Bible> assembler) {
+    public PagedResources<BibleResource> getVersion(@PageableDefault(size = 100) Pageable pageable,
+                                                    @PathVariable("version") String version,
+                                                    PagedResourcesAssembler<Bible> assembler) {
         return assembler.toResource(repository.findAll(isVersion(version), pageable), new BibleResourceAssembler());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}")
     public PagedResources<BibleResource> getBook(@PageableDefault(size = 100) Pageable pageable,
-                                                             @PathVariable("version") String version,
-                                                             @PathVariable("book") String book,
-                                                             PagedResourcesAssembler<Bible> assembler) {
+                                                 @PathVariable("version") String version,
+                                                 @PathVariable("book") String book,
+                                                 PagedResourcesAssembler<Bible> assembler) {
         return assembler.toResource(repository.findAll(where(isVersion(version)).and(isBook(book)), pageable), new BibleResourceAssembler());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}/{chapter:[0-9]$}")
     public PagedResources<BibleResource> getChapter(@PageableDefault(size = 100) Pageable pageable,
-                                                             @PathVariable("version") String version,
-                                                             @PathVariable("book") String book,
-                                                             @PathVariable("chapter") Long chapter,
-                                                             PagedResourcesAssembler<Bible> assembler) {
+                                                    @PathVariable("version") String version,
+                                                    @PathVariable("book") String book,
+                                                    @PathVariable("chapter") Long chapter,
+                                                    PagedResourcesAssembler<Bible> assembler) {
         Page<Bible> page = repository.findAll(where(isVersion(version)).and(isBook(book)).and(isChapter(chapter)), pageable);
         return assembler.toResource(page, new BibleResourceAssembler());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}/{chapter:[0-9]+}.{verse:[0-9]+}")
-    public PagedResources<BibleResource> getVerse(@PageableDefault(size = 100) Pageable pageable,
-                                                              @PathVariable("version") String version,
-                                                              @PathVariable("book") String book,
-                                                              @PathVariable("chapter") Long chapter,
-                                                              @PathVariable("verse") Long verse,
-                                                              PagedResourcesAssembler<Bible> assembler) {
-        Page<Bible> page = repository.findAll(where(isVersion(version)).and(isBook(book)).and(isChapter(chapter)).and(isVerse(verse)), pageable);
-        return assembler.toResource(page, new BibleResourceAssembler());
+    public BibleResource getVerse(@PathVariable("version") String version,
+                                  @PathVariable("book") String book,
+                                  @PathVariable("chapter") Long chapter,
+                                  @PathVariable("verse") Long verse) {
+        Bible entity = repository.findOne(where(isVersion(version)).and(isBook(book)).and(isChapter(chapter)).and(isVerse(verse)));
+        BibleResourceAssembler assembler = new BibleResourceAssembler();
+        if(null == entity) {
+            throw new ResourceNotFound();
+        }
+        return assembler.toResource(entity);
     }
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -112,5 +113,12 @@ public class BibleController {
         id.setVerse(verse);
 
         repository.delete(id);
+    }
+
+    @ExceptionHandler(value = ResourceNotFound.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public void notFoundHandler() {}
+
+    private class ResourceNotFound extends RuntimeException {
     }
 }

@@ -8,9 +8,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-/**
- * Created by CrazyBS on 4/4/2015.
- */
 public class FormatResource extends ResourceSupport implements Serializable {
     private static final long serialVersionUID = 42L;
 

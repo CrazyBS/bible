@@ -1,23 +1,18 @@
 package org.daegames.bible.controller;
 
 import org.daegames.bible.assembler.FormatResourceAssembler;
-import org.daegames.bible.entity.Bible;
 import org.daegames.bible.entity.Format;
 import org.daegames.bible.repository.FormatRepository;
-import org.daegames.bible.resource.BibleResource;
 import org.daegames.bible.resource.FormatResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.PagedResources;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.annotation.Resource;
 
