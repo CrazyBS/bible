@@ -37,7 +37,8 @@ define(['angular'],function (angular) {
           book : verse.book,
           chapter : verse.chapter,
           verse : verse.verse,
-          text : verse.text
+          text : verse.text,
+          header : verse.header
         });
       };
 

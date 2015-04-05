@@ -7,6 +7,7 @@
             paths : {
                 angular : '/library/angular',
                 'angular-debounce' : '/library/angular-debounce',
+                'angular-elastic' : '/library/angular-elastic',
                 lodash : '/library/lodash',
                 app : '/src/BibleApp',
                 controller : '/src/BibleController',
@@ -50,20 +51,19 @@
                     <li data-ng-click="addChapter()" style="cursor: pointer">Add Chapter</li>
                 </ul>
             </div>
-            <div style="width: 80%;height: 100%;position: fixed;right:0;top:0; overflow: scroll">
+            <div style="width: 80%;height: 100%;position: fixed;right:0;top:0;overflow-y: scroll">
                 <span data-ng-repeat="verse in bible | filter: {version: versionSelection} | filter: {book: bookSelection} | filter: {chapter: chapterSelection} | orderBy: 'verse'"
                       data-ng-controller="VerseController"
-                      style="font-family: 'Courier New', Courier, monospace; font-size:small">
-
-                    {{verse.verse}}
-                    <span data-ng-if="!$last" ng-bind-html="renderAsHtml(verse.text)"></span>
-                    <input type="text"
-                           data-ng-if="$last"
-                           data-ng-keyup="$event.keyCode == 13 && $event.shiftKey && $parent.newVerse(verse) || $event.keyCode == 13 && addNewLine(verse)"
-                           data-ng-model="verse.text"
-                           data-ng-attr-size="{{verse.text.length+1}}"
-                           data-focus-me="{{verse.focusMe}}"
-                           style="font-family: 'Courier New', Courier, monospace; border: 0"/>
+                      style="font-family: 'Courier New', Courier, monospace; font-size:small; vertical-align: top">
+                    <sup class="v">{{verse.verse}}</sup>
+                    <span ng-bind-html="verse.text | renderAsHtml | renderLORD"></span>
+                <!--<textarea type="text"-->
+                       <!--data-msd-elastic-->
+                       <!--data-ng-if="$last"-->
+                       <!--data-ng-keyup="$event.keyCode == 13 && $event.shiftKey && $parent.newVerse(verse)"-->
+                       <!--data-ng-model="verse.text"-->
+                       <!--data-focus-me="{{verse.focusMe}}"-->
+                       <!--style="font-family: 'Courier New', Courier, monospace; border: 0; width: 90%;"></textarea>-->
                 </span>
             </div>
         </div>

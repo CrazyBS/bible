@@ -2,10 +2,7 @@ package org.daegames.bible.entity;
 
 import org.daegames.bible.resource.BibleResource;
 
-import javax.persistence.Basic;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
@@ -20,6 +17,12 @@ public class Bible implements Serializable {
     @Basic
     private String text;
 
+    @Basic
+    private String header;
+
+    @Basic
+    private String properties;
+
     public Bible() { }
 
     public Bible(BibleResource verse) {
@@ -29,6 +32,8 @@ public class Bible implements Serializable {
         this.verse.setChapter(verse.getChapter());
         this.verse.setVerse(verse.getVerse());
         this.text = verse.getText();
+        this.header = verse.getHeader();
+        this.properties = verse.getProperties();
     }
 
     public String getText() {
@@ -45,5 +50,21 @@ public class Bible implements Serializable {
 
     public void setVerse(VerseIdentifier verse) {
         this.verse = verse;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
+    }
+
+    public String getProperties() {
+        return properties;
+    }
+
+    public void setProperties(String properties) {
+        this.properties = properties;
     }
 }

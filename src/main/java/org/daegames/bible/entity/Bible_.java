@@ -11,4 +11,6 @@ import java.math.BigDecimal;
 public class Bible_ {
     public static volatile SingularAttribute<Bible, VerseIdentifier> verse;
     public static volatile SingularAttribute<Bible, String> text;
+    public static volatile SingularAttribute<Bible, String> header;
+    public static volatile SingularAttribute<Bible, String> properties;
 }

@@ -46,11 +46,6 @@ public class BibleController {
         return assembler.toResource(repository.findAll(isVersion(version), pageable), new BibleResourceAssembler());
     }
 
-//    @RequestMapping(method = RequestMethod.GET, value = "/{version}")
-//    public List<String> getBibleBooks(@PathVariable("version") String version) {
-//        return repository.getAllBooks(version);
-//    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}")
     public PagedResources<BibleResource> getBook(@PageableDefault(size = 100) Pageable pageable,
                                                              @PathVariable("version") String version,
@@ -60,22 +55,24 @@ public class BibleController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}/{chapter:[0-9]$}")
-    public HttpEntity<PagedResources<BibleResource>> getChapter(@PageableDefault(size = 100) Pageable pageable,
+    public PagedResources<BibleResource> getChapter(@PageableDefault(size = 100) Pageable pageable,
                                                              @PathVariable("version") String version,
                                                              @PathVariable("book") String book,
-                                                             @PathVariable("chapter") Long chapter) {
+                                                             @PathVariable("chapter") Long chapter,
+                                                             PagedResourcesAssembler<Bible> assembler) {
         Page<Bible> page = repository.findAll(where(isVersion(version)).and(isBook(book)).and(isChapter(chapter)), pageable);
-        return new HttpEntity<PagedResources<BibleResource>>(getPagedResource(page));
+        return assembler.toResource(page, new BibleResourceAssembler());
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{version}/{book}/{chapter:[0-9]+}.{verse:[0-9]+}")
-    public HttpEntity<PagedResources<BibleResource>> getVerse(@PageableDefault(size = 100) Pageable pageable,
+    public PagedResources<BibleResource> getVerse(@PageableDefault(size = 100) Pageable pageable,
                                                               @PathVariable("version") String version,
                                                               @PathVariable("book") String book,
                                                               @PathVariable("chapter") Long chapter,
-                                                              @PathVariable("verse") Long verse) {
+                                                              @PathVariable("verse") Long verse,
+                                                              PagedResourcesAssembler<Bible> assembler) {
         Page<Bible> page = repository.findAll(where(isVersion(version)).and(isBook(book)).and(isChapter(chapter)).and(isVerse(verse)), pageable);
-        return new HttpEntity<PagedResources<BibleResource>>(getPagedResource(page));
+        return assembler.toResource(page, new BibleResourceAssembler());
     }
 
     @RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -115,15 +112,5 @@ public class BibleController {
         id.setVerse(verse);
 
         repository.delete(id);
-    }
-
-    private PagedResources<BibleResource> getPagedResource(Page<Bible> page) {
-        BibleResourceAssembler assembler = new BibleResourceAssembler();
-
-        List<BibleResource> resources = assembler.toResources(page.getContent());
-
-        PagedResources.PageMetadata metaData = new PagedResources.PageMetadata(page.getSize(), page.getNumber(), page.getTotalElements(), page.getTotalPages());
-
-        return new PagedResources<BibleResource>(resources, metaData);
     }
 }

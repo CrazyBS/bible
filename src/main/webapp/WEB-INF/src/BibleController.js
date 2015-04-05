@@ -1,9 +1,9 @@
 /**
  * Created by CrazyBS on 3/13/2015.
  */
-define(['angular','angular-debounce','lodash'], function (angular, debounce, _) {
+define(['angular','angular-debounce','lodash', 'angular-elastic'], function (angular, debounce, _) {
 
-  var module = angular.module('BibleControllers', ['BibleServices','rt.debounce']);
+  var module = angular.module('BibleControllers', ['BibleServices','rt.debounce','monospaced.elastic']);
 
   module.controller("BibleController", ['$scope','BibleService',
     function bibleControllerFunc ($scope, bibleService) {
@@ -29,6 +29,7 @@ define(['angular','angular-debounce','lodash'], function (angular, debounce, _) 
           chapter : verse.chapter,
           verse: _.max(_.filter($scope.bible, {version:verse.version,book:verse.book,chapter:verse.chapter}), 'verse').verse + 1,
           text : "",
+          header : null,
           focusMe : true
         });
         return true;
@@ -46,16 +47,22 @@ define(['angular','angular-debounce','lodash'], function (angular, debounce, _) 
           chapter : newChapter,
           verse: 1,
           text : "",
+          header : null,
           focusMe : true
         });
         $scope.chapterSelection = newChapter;
         return true;
-      }
+      };
+
+      $scope.headerSorter = function (verseArray) {
+        console.log("verseArray", verseArray);
+        return verseArray[0].verse;
+      };
     }
   ]);
 
   module.controller("VerseController", ['$scope', 'BibleService', 'debounce','$sce',
-      function verseControllFunc ($scope, bibleService, debounce, $sce) {
+      function verseControlFunc ($scope, bibleService, debounce, $sce) {
         $scope.$watch('verse.text',
             debounce(1000,
                 function verseWatcher (newValue, oldValue, scope) {
@@ -81,15 +88,6 @@ define(['angular','angular-debounce','lodash'], function (angular, debounce, _) 
                     }
                   }
                 }), true);
-
-        $scope.addNewLine = function (verse) {
-          verse.text += '<br/>';
-        };
-
-        $scope.renderAsHtml = function (text) {
-          return $sce.trustAsHtml(text);
-        }
-
       }]);
 
   return module;

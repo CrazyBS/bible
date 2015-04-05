@@ -4,11 +4,19 @@ import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-public class BibleResource extends ResourceSupport implements Serializable {
+/**
+ * Created by CrazyBS on 4/4/2015.
+ */
+public class FormatResource extends ResourceSupport implements Serializable {
     private static final long serialVersionUID = 42L;
+
+    @NotNull
+    @Min(1)
+    private Long formatId;
 
     @Size(min = 1, max = 50)
     @NotNull
@@ -18,23 +26,35 @@ public class BibleResource extends ResourceSupport implements Serializable {
     @NotNull
     private String book;
 
-    @Min(1)
     @NotNull
+    @Min(1)
     private Long chapter;
 
-    @Min(1)
     @NotNull
-    private Long verse;
+    @Pattern(regexp = "\\d+(\\.\\d+)?")
+    private String start;
 
-    @Size(min = 1, max = 300)
     @NotNull
-    private String text;
+    @Pattern(regexp = "\\d+(\\.\\d+)?")
+    private String end;
 
-    @Size(max=50)
-    private String header;
-
+    @NotNull
     @Size(max=100)
     private String properties;
+
+    public FormatResource() {}
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getFormatId() {
+        return formatId;
+    }
+
+    public void setFormatId(Long formatId) {
+        this.formatId = formatId;
+    }
 
     public String getVersion() {
         return version;
@@ -60,28 +80,20 @@ public class BibleResource extends ResourceSupport implements Serializable {
         this.chapter = chapter;
     }
 
-    public Long getVerse() {
-        return verse;
+    public String getStart() {
+        return start;
     }
 
-    public void setVerse(Long verse) {
-        this.verse = verse;
+    public void setStart(String start) {
+        this.start = start;
     }
 
-    public String getText() {
-        return text;
+    public String getEnd() {
+        return end;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getHeader() {
-        return header;
-    }
-
-    public void setHeader(String header) {
-        this.header = header;
+    public void setEnd(String end) {
+        this.end = end;
     }
 
     public String getProperties() {
